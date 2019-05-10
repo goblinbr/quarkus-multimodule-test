@@ -24,7 +24,7 @@ Quarkus multimodule config problem:
 - But running the jar it does work
 
 > mvn clean package  
-> java -jar runner\target\quarkus-quickstart-multimodule-main-1.0-SNAPSHOT-runner.jar
+> java -jar runner\target\quarkus-quickstart-multimodule-main-1.0-SNAPSHOT-runner.jar  
 > curl --verbose http://localhost:8080/app/hello/greeting
 ```
 *   Trying ::1...
@@ -43,3 +43,6 @@ Quarkus multimodule config problem:
 * Connection #0 to host localhost left intact
 bonjour
 ```
+
+Endpoint: https://github.com/goblinbr/quarkus-multimodule-test/blob/master/rest/src/main/java/org/acme/HelloResource.java  
+Config file: https://github.com/goblinbr/quarkus-multimodule-test/blob/master/runner/src/main/resources/application.properties
