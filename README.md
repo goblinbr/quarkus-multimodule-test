@@ -1,48 +1,37 @@
 "# quarkus-multimodule-test" 
 
-Quarkus multimodule config problem:
+Running quarkus:dev with a lot of entities throws org.objectweb.asm.MethodTooLargeException
 
-- Running quarkus:dev the @ConfigProperty doens't work, even with the defaultValue
-
-> mvnw compile quarkus:dev  
-> curl --verbose http://localhost:8080/app/hello/greeting
+> mvnw clean compile quarkus:dev  
 ```
-*   Trying ::1...
-* Connected to localhost (::1) port 8080 (#0)
-> GET /app/hello/greeting HTTP/1.1
-> Host: localhost:8080
-> User-Agent: curl/7.47.0
-> Accept: */*
->
-< HTTP/1.1 204 No Content
-< Date: Fri, 10 May 2019 12:16:17 GMT
-<
-* Connection #0 to host localhost left intact
+ERROR [io.qua.dev.DevModeMain] Failed to start quarkus: java.lang.RuntimeException: io.quarkus.builder.BuildException: Build failure: Build failed due to errors
+        [error]: Build step io.quarkus.deployment.steps.MainClassBuildStep#build threw an exception: org.objectweb.asm.MethodTooLargeException: Method too large: io/quarkus/deployment/steps/HibernateOrmProcessor$build8.deploy (Lio/quarkus/runtime/StartupContext;)V
+        at io.quarkus.runner.RuntimeRunner.run(RuntimeRunner.java:137)
+        at io.quarkus.dev.DevModeMain.doStart(DevModeMain.java:159)
+        at io.quarkus.dev.DevModeMain.main(DevModeMain.java:93)
+Caused by: io.quarkus.builder.BuildException: Build failure: Build failed due to errors
+        [error]: Build step io.quarkus.deployment.steps.MainClassBuildStep#build threw an exception: org.objectweb.asm.MethodTooLargeException: Method too large: io/quarkus/deployment/steps/HibernateOrmProcessor$build8.deploy (Lio/quarkus/runtime/StartupContext;)V
+        at io.quarkus.builder.Execution.run(Execution.java:124)
+        at io.quarkus.builder.BuildExecutionBuilder.execute(BuildExecutionBuilder.java:137)
+        at io.quarkus.deployment.QuarkusAugmentor.run(QuarkusAugmentor.java:108)
+        at io.quarkus.runner.RuntimeRunner.run(RuntimeRunner.java:102)
+        ... 2 more
+Caused by: org.objectweb.asm.MethodTooLargeException: Method too large: io/quarkus/deployment/steps/HibernateOrmProcessor$build8.deploy (Lio/quarkus/runtime/StartupContext;)V
+        at org.objectweb.asm.MethodWriter.computeMethodInfoSize(MethodWriter.java:2080)
+        at org.objectweb.asm.ClassWriter.toByteArray(ClassWriter.java:459)
+        at io.quarkus.gizmo.ClassCreator.close(ClassCreator.java:184)
+        at io.quarkus.deployment.recording.BytecodeRecorderImpl.writeBytecode(BytecodeRecorderImpl.java:325)
+        at io.quarkus.deployment.steps.MainClassBuildStep.build(MainClassBuildStep.java:117)
+        at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+        at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+        at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+        at java.lang.reflect.Method.invoke(Method.java:498)
+        at io.quarkus.deployment.ExtensionLoader$1.execute(ExtensionLoader.java:507)
+        at io.quarkus.builder.BuildContext.run(BuildContext.java:414)
+        at org.jboss.threads.ContextClassLoaderSavingRunnable.run(ContextClassLoaderSavingRunnable.java:35)
+        at org.jboss.threads.EnhancedQueueExecutor.safeRun(EnhancedQueueExecutor.java:2011)
+        at org.jboss.threads.EnhancedQueueExecutor$ThreadBody.doRunTask(EnhancedQueueExecutor.java:1538)
+        at org.jboss.threads.EnhancedQueueExecutor$ThreadBody.run(EnhancedQueueExecutor.java:1429)
+        at java.lang.Thread.run(Thread.java:748)
+        at org.jboss.threads.JBossThread.run(JBossThread.java:479)
 ```
-
-
-- But running the jar it does work
-
-> mvn clean package  
-> java -jar runner\target\quarkus-quickstart-multimodule-main-1.0-SNAPSHOT-runner.jar  
-> curl --verbose http://localhost:8080/app/hello/greeting
-```
-*   Trying ::1...
-* Connected to localhost (::1) port 8080 (#0)
-> GET /app/hello/greeting HTTP/1.1
-> Host: localhost:8080
-> User-Agent: curl/7.47.0
-> Accept: */*
->
-< HTTP/1.1 200 OK
-< Connection: keep-alive
-< Content-Type: text/plain;charset=UTF-8
-< Content-Length: 7
-< Date: Fri, 10 May 2019 12:18:52 GMT
-<
-* Connection #0 to host localhost left intact
-bonjour
-```
-
-Endpoint: https://github.com/goblinbr/quarkus-multimodule-test/blob/master/rest/src/main/java/org/acme/HelloResource.java  
-Config file: https://github.com/goblinbr/quarkus-multimodule-test/blob/master/runner/src/main/resources/application.properties
